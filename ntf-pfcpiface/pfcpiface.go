@@ -42,6 +42,8 @@ type sequenceNumber struct {
 
 var seqNum sequenceNumber
 
+var ntfConfig *NtfConfigSet
+
 func pfcpifaceMainLoop(upf *upf, accessIP, coreIP, sourceIP, smfName string) {
 	log.Println("pfcpifaceMainLoop@" + upf.fqdnHost + " says hello!!!")
 
@@ -52,6 +54,8 @@ func pfcpifaceMainLoop(upf *upf, accessIP, coreIP, sourceIP, smfName string) {
 	if err != nil {
 		log.Fatalln("Error initializing NTF:", err)
 	}
+
+	ntfConfig = NewNtfConfigSet(upf, 1)
 
 	// Verify IP + Port binding
 	laddr, err := net.ResolveUDPAddr("udp", sourceIP+":"+PFCPPort)
@@ -189,11 +193,12 @@ func handlePFDManagementRequest(upf *upf, msg message.Message, addr net.Addr) []
 			log.Println("Failed to read application ID:", err)
 		}
 
-		appId, err := strconv.ParseUint(appIdStr, 10, 32)
+		appId64, err := strconv.ParseUint(appIdStr, 10, 32)
 		if err != nil {
 			log.Println("invalid app ID:", appIdStr)
 			return nil
 		}
+		appId := uint32(appId64)
 
 		contents, err := instance.PFDContents()
 		if err != nil {
@@ -201,18 +206,28 @@ func handlePFDManagementRequest(upf *upf, msg message.Message, addr net.Addr) []
 		}
 		config := contents.CustomPFDContent
 
-		// TODO: We need to do something about DSCP here
 		log.Println("Found service:", appId, "config:", config)
-		err = ntfCreateService(upf, 1, uint32(appId), config, 42)
-		if err != nil {
-			log.Println("Failed to create service:", err)
-		}
+		ntfConfig.UpdateAppEncryptionKey(appId, config)
+
+		// TODO: DSCP will come from FAR rule in session establishment req
+		ntfConfig.UpdateAppDSCP(appId, 42)
 	}
 
-	pfdres, err := message.NewPFDManagementResponse(pfdreq.SequenceNumber,
-		ie.NewCause(ie.CauseRequestRejected),
-		ie.NewOffendingIE(ie.PFDContents),
-	).Marshal()
+	var pfdres []byte
+	var err error
+
+	if false {
+		// Failure message
+		pfdres, err = message.NewPFDManagementResponseFailure(pfdreq.SequenceNumber,
+			ie.NewCause(ie.CauseRequestRejected),
+			ie.NewOffendingIE(ie.PFDContents),
+		).Marshal()
+	} else {
+		// Success message
+		pfdres, err = message.NewPFDManagementResponse(pfdreq.SequenceNumber,
+			ie.NewCause(ie.CauseRequestAccepted),
+		).Marshal()
+	}
 
 	if err != nil {
 		log.Fatalln("Unable to create PFD management response to: ", addr)
@@ -538,45 +553,6 @@ func initializeNtf(upf *upf, moduleName string, dpid int, maxEntries int) error 
 		return err
 	}
 	log.Println("ntf.table_create():", cr)
-
-	if err = upf.resumeAll(); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func ntfCreateService(upf *upf, dpid uint32, appId uint32, encryptionKey string, dscp uint32) error {
-	if err := upf.pauseAll(); err != nil {
-		return err
-	}
-
-	any, err := ptypes.MarshalAny(&ntf_pb.NtfEntryCreateArg{
-		Dpid: dpid,
-		Token: &ntf_pb.UserCentricNetworkToken{
-			AppId: appId,
-			EncryptionKey: encryptionKey,
-		},
-		Dscp: dscp,
-	})
-	if err != nil {
-		return err
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 100 * time.Millisecond)
-	defer cancel()
-
-	cr, err := upf.client.ModuleCommand(ctx, &pb.CommandRequest{
-		Name: "ntf0",
-		Cmd: "entry_create",
-		Arg: any,
-	})
-	log.Println("entry_create:", cr)
-
-	if err != nil {
-		return err
-	}
-	log.Println("ntf.entry_create():", cr)
 
 	if err = upf.resumeAll(); err != nil {
 		return err
