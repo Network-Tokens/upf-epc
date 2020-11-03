@@ -19,22 +19,7 @@ type PFDManagementResponse struct {
 }
 
 // NewPFDManagementResponse creates a new PFDManagementResponse.
-func NewPFDManagementResponse(seq uint32, cause *ie.IE, ies ...*ie.IE) *PFDManagementResponse {
-	m := &PFDManagementResponse{
-		Header: NewHeader(
-			1, 0, 0, 0,
-			MsgTypePFDManagementResponse, 0, seq, 0,
-			nil,
-		),
-		Cause:       cause,
-		IEs:         ies,
-	}
-	m.SetLength()
-
-	return m
-}
-
-func NewPFDManagementResponseFailure(seq uint32, cause, offending *ie.IE, ies ...*ie.IE) *PFDManagementResponse {
+func NewPFDManagementResponse(seq uint32, cause, offending *ie.IE, ies ...*ie.IE) *PFDManagementResponse {
 	m := &PFDManagementResponse{
 		Header: NewHeader(
 			1, 0, 0, 0,
