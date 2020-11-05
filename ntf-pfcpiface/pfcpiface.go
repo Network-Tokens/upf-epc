@@ -218,7 +218,7 @@ func handlePFDManagementRequest(upf *upf, msg message.Message, addr net.Addr) []
 
 	if false {
 		// Failure message
-		pfdres, err = message.NewPFDManagementResponseFailure(pfdreq.SequenceNumber,
+		pfdres, err = message.NewPFDManagementResponse(pfdreq.SequenceNumber,
 			ie.NewCause(ie.CauseRequestRejected),
 			ie.NewOffendingIE(ie.PFDContents),
 		).Marshal()
@@ -226,6 +226,7 @@ func handlePFDManagementRequest(upf *upf, msg message.Message, addr net.Addr) []
 		// Success message
 		pfdres, err = message.NewPFDManagementResponse(pfdreq.SequenceNumber,
 			ie.NewCause(ie.CauseRequestAccepted),
+			nil,
 		).Marshal()
 	}
 
