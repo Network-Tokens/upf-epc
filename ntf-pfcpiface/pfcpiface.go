@@ -16,7 +16,7 @@ import (
 	"github.com/wmnsk/go-pfcp/message"
 	"github.com/golang/protobuf/ptypes"
 	pb "github.com/omec-project/upf-epc/pfcpiface/bess_pb"
-	"github.com/Network-Tokens/ntf/ntf_pb"
+	"ntf_pb"
 )
 
 // PktBufSz : buffer size for incoming pkt
@@ -522,8 +522,11 @@ func initializeNtf(upf *upf, moduleName string, dpid int, maxEntries int) error 
 	}
 
 	// Delete the existing table first
-	any, err := ptypes.MarshalAny(&pb.EmptyArg{})
+	any, err := ptypes.MarshalAny(&ntf_pb.NtfTableDeleteArg{
+		Dpid: uint32(dpid),
+	})
 	if err != nil {
+		print("Error:", err)
 		return err
 	}
 
@@ -534,14 +537,24 @@ func initializeNtf(upf *upf, moduleName string, dpid int, maxEntries int) error 
 	})
 	log.Println("table_delete:", cr)
 
-	any, err = ptypes.MarshalAny(&ntf_pb.NtfTableCreateArg{
-		Dpid: 1,
-		MaxEntries: 64,
-	})
+	createArg := &ntf_pb.NtfTableCreateArg{
+		Dpid: uint32(dpid),
+		MaxEntries: uint32(maxEntries),
+	}
+	print("Dpid in struct:", createArg.Dpid)
+	any, err = ptypes.MarshalAny(createArg)
 	if err != nil {
 		return err
 	}
 
+	var decoded ntf_pb.NtfTableCreateArg
+	err = ptypes.UnmarshalAny(any, &decoded)
+	if err != nil {
+		print("Error unmarshalling:", err)
+	}
+	log.Println("Decoded:", decoded)
+
+	log.Println("createArg:", createArg)
 	log.Println("arg:", any)
 	cr, err = upf.client.ModuleCommand(ctx, &pb.CommandRequest{
 		Name: "ntf0",

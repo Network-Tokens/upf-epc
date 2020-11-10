@@ -60,7 +60,8 @@ RUN ./build_bess.sh && \
     mkdir -p /opt/bess && \
     cp -r bessctl pybess /opt/bess && \
     cp -r core/pb /pb && \
-    cp -a protobuf /protobuf
+    cp -a protobuf /protobuf && \
+    cp -a plugins /plugins
 
 # Stage pip: compile psutil
 FROM python:3.8-slim AS pip
@@ -126,6 +127,13 @@ RUN mkdir /bess_pb && \
     protoc -I /usr/include -I /protobuf/ \
         /protobuf/*.proto /protobuf/ports/*.proto \
         --go_out=plugins=grpc:/bess_pb
+RUN mkdir /ntf_pb && \
+	find /plugins && \
+    cd /plugins/ntf/protobuf && \
+    protoc -I /usr/include -I /protobuf/ \
+		-I /plugins/ntf/protobuf \
+		/plugins/ntf/protobuf/ntf_msg.proto \
+        --go_out=plugins=grpc:/ntf_pb
 
 FROM golang AS pfcpiface-build
 WORKDIR /pfcpiface
@@ -152,6 +160,7 @@ ENTRYPOINT [ "/bin/ntf-pfcpiface" ]
 FROM scratch AS pb
 COPY --from=bess-build /protobuf /protobuf
 COPY --from=go-pb /bess_pb /bess_pb
+COPY --from=go-pb /ntf_pb /ntf_pb
 
 # Stage binaries: dummy stage for collecting artifacts
 FROM scratch AS artifacts

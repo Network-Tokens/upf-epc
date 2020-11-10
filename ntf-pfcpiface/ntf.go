@@ -7,7 +7,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes"
 	pb "github.com/omec-project/upf-epc/pfcpiface/bess_pb"
-	"github.com/Network-Tokens/ntf/ntf_pb"
+	"ntf_pb"
 )
 
 type ntfConfigEntry struct {
@@ -34,7 +34,7 @@ func NewNtfConfigSet(upf *upf, dpid uint32) *NtfConfigSet {
 	return config
 }
 
-func NewNtfConfigEntry(upf *upf, appId uint32, dpid uint32) *ntfConfigEntry {
+func NewNtfConfigEntry(upf *upf, dpid uint32, appId uint32) *ntfConfigEntry {
 	log.Println("NewNtfConfigEntry")
 	entry := new(ntfConfigEntry)
 	entry.appId = appId
@@ -101,19 +101,23 @@ func (config *NtfConfigSet) UpdateAppDSCP(appId uint32, dscp uint32) {
 }
 
 func (config *ntfConfigEntry) createBessEntry(upf *upf) error {
-	log.Println("ntfConfigEntry.createBessEntry()")
+	log.Println("ntfConfigEntry.createBessEntry(config.appId=", config.appId, ")")
 	if err := upf.pauseAll(); err != nil {
 		return err
 	}
 
-	any, err := ptypes.MarshalAny(&ntf_pb.NtfEntryCreateArg{
+	token := ntf_pb.UserCentricNetworkToken{
+		AppId:         config.appId,
+		EncryptionKey: config.encryptionKey,
+	}
+
+	arg := ntf_pb.NtfEntryCreateArg{
 		Dpid: config.dpid,
-		Token: &ntf_pb.UserCentricNetworkToken{
-			AppId:         config.appId,
-			EncryptionKey: config.encryptionKey,
-		},
-		Dscp: config.dscp,
-	})
+		Token: &token,
+		Options: &ntf_pb.NtfEntryCreateArg_Dscp{config.dscp},
+	}
+
+	any, err := ptypes.MarshalAny(&arg)
 	if err != nil {
 		return err
 	}

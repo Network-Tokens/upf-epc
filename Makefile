@@ -11,6 +11,7 @@ CPU                      ?= native
 # Enable Network Token Function support (see https://networktokens.org for more
 # information)
 ENABLE_NTF               ?= 0
+NTF_COMMIT               ?= master
 
 ## Docker related
 DOCKER_REGISTRY          ?=
@@ -20,6 +21,7 @@ DOCKER_IMAGENAME         := ${DOCKER_REGISTRY}${DOCKER_REPOSITORY}${PROJECT_NAME
 DOCKER_BUILDKIT          ?= 1
 DOCKER_BUILD_ARGS        ?= --build-arg MAKEFLAGS=-j$(shell nproc) --build-arg CPU
 DOCKER_BUILD_ARGS        += --build-arg ENABLE_NTF=$(ENABLE_NTF)
+DOCKER_BUILD_ARGS        += --build-arg NTF_COMMIT=$(NTF_COMMIT)
 
 ## Docker labels. Only set ref and commit date if committed
 DOCKER_LABEL_VCS_URL     ?= $(shell git remote get-url $(shell git remote))
@@ -58,6 +60,7 @@ output:
 
 # Golang grpc/protobuf generation
 BESS_PB_DIR ?= pfcpiface
+NTF_PB_DIR ?= ntf-pfcpiface
 
 pb:
 	DOCKER_BUILDKIT=$(DOCKER_BUILDKIT) docker build $(DOCKER_BUILD_ARGS) \
@@ -65,5 +68,6 @@ pb:
 		--output output \
 		.;
 	cp -a output/bess_pb ${BESS_PB_DIR}
+	cp -a output/ntf_pb ${NTF_PB_DIR}
 
 .PHONY: docker-build docker-push output pb
