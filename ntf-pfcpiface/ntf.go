@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"time"
 
@@ -10,111 +11,91 @@ import (
 	"ntf_pb"
 )
 
-type ntfConfigEntry struct {
-	dpid              uint32
-	upf               *upf
-	appId             uint32
-	encryptionKey     string
-	dscp              uint32
-	configured		  bool
+type ntfUserCentricToken struct {
+	tokenAppId    uint32
+	encryptionKey string
+	dscp          uint32
 }
 
-type NtfConfigSet struct {
-	configs map[uint32]*ntfConfigEntry
+type pfdRuleEntry struct {
+	upf        *upf
+	dpid       uint32
+	pfdAppId   uint32
+	config     *ntfUserCentricToken
+}
+
+type PfdRules struct {
+	rules map[uint32]*pfdRuleEntry
 	upf     *upf
 	dpid    uint32
 }
 
-func NewNtfConfigSet(upf *upf, dpid uint32) *NtfConfigSet {
-	log.Println("NewNtfConfigSet")
-	config := new(NtfConfigSet)
-	config.configs = make(map[uint32]*ntfConfigEntry)
+func NewPfdRules(upf *upf, dpid uint32) *PfdRules {
+	log.Println("NewPfdRules")
+	config := new(PfdRules)
+	config.rules = make(map[uint32]*pfdRuleEntry)
 	config.upf = upf
 	config.dpid = dpid
 	return config
 }
 
-func NewNtfConfigEntry(upf *upf, dpid uint32, appId uint32) *ntfConfigEntry {
-	log.Println("NewNtfConfigEntry")
-	entry := new(ntfConfigEntry)
-	entry.appId = appId
-	entry.upf = upf
-	entry.dpid = dpid
+func (pfdRules *PfdRules) NewPfdRule(pfdAppId uint32) *pfdRuleEntry {
+	log.Println("NewPfdRule")
+	entry := new(pfdRuleEntry)
+	entry.upf = pfdRules.upf
+	entry.dpid = pfdRules.dpid
+	entry.pfdAppId = pfdAppId
+    pfdRules.rules[pfdAppId] = entry
 	return entry
 }
 
-func (entry *ntfConfigEntry) updateState() {
-	log.Println("ntfConfigEntry.updateState()")
-	ready := entry.encryptionKey != "" && entry.dscp > 0
-	if !entry.configured {
-		log.Println(" - not configured yet")
-		if ready {
-			log.Println(" - configuring...")
-			entry.createBessEntry(entry.upf)
-		} else {
-			log.Println(" - incomplete...")
-		}
+func (entry *pfdRuleEntry) setConfig(config *ntfUserCentricToken) {
+	log.Println("pfdRuleEntry.setConfig()")
+
+	create := false
+	if entry.config == nil {
+		create = true
+	}
+
+	entry.config = config
+
+	if create {
+		entry.createBessEntry(entry.upf)
 	} else {
-		log.Println(" - already configured")
-		if ready {
-			log.Println(" - updating...")
-			entry.updateBessEntry(entry.upf)
-		} else {
-			log.Println(" - removing...")
-			entry.deleteBessEntry(entry.upf)
-		}
+		entry.updateBessEntry(entry.upf)
 	}
 }
 
-func (config *ntfConfigEntry) setDSCP(dscp uint32) {
-	log.Println("ntfConfigEntry.setDSCP()")
-	config.dscp = dscp
-	config.updateState()
-}
+func (pfdRules *PfdRules) UpdateAppConfig(pfdAppId uint32, config string) {
+	log.Println("PfdRules.UpdateAppConfig()")
 
-func (config *ntfConfigEntry) setEncryptionKey(encryptionKey string) {
-	log.Println("ntfConfigEntry.setEncryptionKey()")
-	config.encryptionKey = encryptionKey
-	config.updateState()
-}
+	var tokenConfig ntfUserCentricToken
+	json.Unmarshal([]byte(config), &tokenConfig)
 
-func (config *NtfConfigSet) UpdateAppEncryptionKey(appId uint32, encryptionKey string) {
-	log.Println("NtfConfigSet.UpdateAppEncryptionKey()")
-	entry, ok := config.configs[appId]
+	entry, ok := pfdRules.rules[pfdAppId]
 	if !ok {
-		entry = NewNtfConfigEntry(config.upf, config.dpid, appId)
-		config.configs[appId] = entry
+		entry = pfdRules.NewPfdRule(pfdAppId)
 	}
 
-	entry.setEncryptionKey(encryptionKey)
+	entry.setConfig(&tokenConfig)
 }
 
-func (config *NtfConfigSet) UpdateAppDSCP(appId uint32, dscp uint32) {
-	log.Println("NtfConfigSet.UpdateAppDSCP()")
-	entry, ok := config.configs[appId]
-	if !ok {
-		entry = NewNtfConfigEntry(config.upf, appId, config.dpid)
-		config.configs[appId] = entry
-	}
-
-	entry.setDSCP(dscp)
-}
-
-func (config *ntfConfigEntry) createBessEntry(upf *upf) error {
-	log.Println("ntfConfigEntry.createBessEntry(config.appId=", config.appId, ")")
+func (entry *pfdRuleEntry) createBessEntry(upf *upf) error {
+	log.Println("pfdRuleEntry.createBessEntry(entry.pfdAppId=", entry.pfdAppId, ")")
 	if err := upf.pauseAll(); err != nil {
 		return err
 	}
 
 	token := ntf_pb.UserCentricNetworkToken{
-		AppId:         config.appId,
-		EncryptionKey: config.encryptionKey,
+		AppId:         entry.config.tokenAppId,
+		EncryptionKey: entry.config.encryptionKey,
 	}
 
 	arg := ntf_pb.NtfEntryCreateArg{
-		Dpid: config.dpid,
-		Token: &token,
-		Options: &ntf_pb.NtfEntryCreateArg_Dscp{config.dscp},
+		Dpid:      entry.dpid,
+		Token:     &token,
+		SetDscp:   &ntf_pb.NtfEntryCreateArg_Dscp{entry.config.dscp},
+		SetRuleId: &ntf_pb.NtfEntryCreateArg_RuleId{entry.pfdAppId},
 	}
 
 	any, err := ptypes.MarshalAny(&arg)
@@ -152,12 +133,12 @@ func (e *ntfError) Error() string {
 	return e.reason
 }
 
-func (config *ntfConfigEntry) updateBessEntry(upf *upf) error {
+func (config *pfdRuleEntry) updateBessEntry(upf *upf) error {
 	log.Println("TODO: updateBessEntry")
-	return &ntfError{ "TODO" }
+	return &ntfError{"TODO"}
 }
 
-func (config *ntfConfigEntry) deleteBessEntry(upf *upf) error {
+func (config *pfdRuleEntry) deleteBessEntry(upf *upf) error {
 	log.Println("TODO: deleteBessEntry")
-	return &ntfError{ "TODO" }
+	return &ntfError{"TODO"}
 }

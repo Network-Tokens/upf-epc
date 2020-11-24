@@ -42,7 +42,7 @@ type sequenceNumber struct {
 
 var seqNum sequenceNumber
 
-var ntfConfig *NtfConfigSet
+var pfdRules *PfdRules
 
 func pfcpifaceMainLoop(upf *upf, accessIP, coreIP, sourceIP, smfName string) {
 	log.Println("pfcpifaceMainLoop@" + upf.fqdnHost + " says hello!!!")
@@ -55,7 +55,7 @@ func pfcpifaceMainLoop(upf *upf, accessIP, coreIP, sourceIP, smfName string) {
 		log.Fatalln("Error initializing NTF:", err)
 	}
 
-	ntfConfig = NewNtfConfigSet(upf, 1)
+	pfdRules = NewPfdRules(upf, 1)
 
 	// Verify IP + Port binding
 	laddr, err := net.ResolveUDPAddr("udp", sourceIP+":"+PFCPPort)
@@ -188,17 +188,17 @@ func handlePFDManagementRequest(upf *upf, msg message.Message, addr net.Addr) []
 	}
 
 	for _, instance := range pfdreq.ApplicationIDsPFDs {
-		appIdStr, err := instance.ApplicationID()
+		pfdAppIdStr, err := instance.ApplicationID()
 		if err != nil {
 			log.Println("Failed to read application ID:", err)
 		}
 
-		appId64, err := strconv.ParseUint(appIdStr, 10, 32)
+		pfdAppId64, err := strconv.ParseUint(pfdAppIdStr, 10, 32)
 		if err != nil {
-			log.Println("invalid app ID:", appIdStr)
+			log.Println("invalid app ID:", pfdAppIdStr)
 			return nil
 		}
-		appId := uint32(appId64)
+		pfdAppId := uint32(pfdAppId64)
 
 		contents, err := instance.PFDContents()
 		if err != nil {
@@ -206,11 +206,8 @@ func handlePFDManagementRequest(upf *upf, msg message.Message, addr net.Addr) []
 		}
 		config := contents.CustomPFDContent
 
-		log.Println("Found service:", appId, "config:", config)
-		ntfConfig.UpdateAppEncryptionKey(appId, config)
-
-		// TODO: DSCP will come from FAR rule in session establishment req
-		ntfConfig.UpdateAppDSCP(appId, 42)
+		log.Println("Found service:", pfdAppId, "config:", config)
+		pfdRules.UpdateAppConfig(pfdAppId, config)
 	}
 
 	var pfdres []byte
