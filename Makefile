@@ -60,14 +60,14 @@ output:
 
 # Golang grpc/protobuf generation
 BESS_PB_DIR ?= pfcpiface
-NTF_PB_DIR ?= ntf-pfcpiface
+NTF_PB_DIR ?= ntf-pfcpiface/vendor
 
 pb:
 	DOCKER_BUILDKIT=$(DOCKER_BUILDKIT) docker build $(DOCKER_BUILD_ARGS) \
 		--target pb \
 		--output output \
 		.;
-	cp -a output/bess_pb ${BESS_PB_DIR}
-	cp -a output/ntf_pb ${NTF_PB_DIR}
+	cp -av output/bess_pb ${BESS_PB_DIR}
+	cp -av output/ntf_pb ${NTF_PB_DIR}
 
 .PHONY: docker-build docker-push output pb

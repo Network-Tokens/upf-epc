@@ -12,9 +12,9 @@ import (
 )
 
 type ntfUserCentricToken struct {
-	tokenAppId    uint32
-	encryptionKey string
-	dscp          uint32
+	TokenAppId    uint32
+	EncryptionKey string
+	Dscp          uint32
 }
 
 type pfdRuleEntry struct {
@@ -68,9 +68,11 @@ func (entry *pfdRuleEntry) setConfig(config *ntfUserCentricToken) {
 
 func (pfdRules *PfdRules) UpdateAppConfig(pfdAppId uint32, config string) {
 	log.Println("PfdRules.UpdateAppConfig()")
+	log.Println("pfdAppId:", pfdAppId, " config:", config)
 
 	var tokenConfig ntfUserCentricToken
 	json.Unmarshal([]byte(config), &tokenConfig)
+    log.Println("unmarshalled:", tokenConfig)
 
 	entry, ok := pfdRules.rules[pfdAppId]
 	if !ok {
@@ -87,14 +89,14 @@ func (entry *pfdRuleEntry) createBessEntry(upf *upf) error {
 	}
 
 	token := ntf_pb.UserCentricNetworkToken{
-		AppId:         entry.config.tokenAppId,
-		EncryptionKey: entry.config.encryptionKey,
+		AppId:         entry.config.TokenAppId,
+		EncryptionKey: entry.config.EncryptionKey,
 	}
 
 	arg := ntf_pb.NtfEntryCreateArg{
 		Dpid:      entry.dpid,
 		Token:     &token,
-		SetDscp:   &ntf_pb.NtfEntryCreateArg_Dscp{entry.config.dscp},
+		SetDscp:   &ntf_pb.NtfEntryCreateArg_Dscp{entry.config.Dscp},
 		SetRuleId: &ntf_pb.NtfEntryCreateArg_RuleId{entry.pfdAppId},
 	}
 
