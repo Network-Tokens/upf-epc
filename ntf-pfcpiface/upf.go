@@ -311,19 +311,19 @@ func (u *upf) sim(method string) {
 
 			fars = append(fars, far{
 				// Downlink FAR
-				farID: n3,
-				fseID: n3TEID + i + 200000,
+				farID: n3ded,
+				fseID: n3TEID + i,
 
 				action:       farForwardD,
 				tunnelType:   0x1,
 				tunnelIP4Src: ip2int(u.accessIP),
 				tunnelIP4Dst: ip2int(enbip) + enbIdx,
-				tunnelTEID:   n3TEID + i,
+				tunnelTEID:   n3TEID + i + 200000,
 				tunnelPort:   tunnelPort,
 			}, far{
 				// Uplink FAR
-				farID: n6,
-				fseID: n3TEID + i + 200000,
+				farID: n6ded,
+				fseID: n3TEID + i,
 
 				action: farForwardU,
 			})
