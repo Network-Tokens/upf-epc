@@ -170,7 +170,7 @@ linkMerge::Merge() \
                                         {'attr_name':'dst_ip', 'num_bytes':4}, \
                                         {'attr_name':'src_port', 'num_bytes':2}, \
                                         {'attr_name':'dst_port', 'num_bytes':2}, \
-                                        {'attr_name':'ip_proto', 'num_bytes':1}], \
+                                        {'attr_name':'ip_proto', 'num_bytes':1}, \
                                         {'attr_name':'type_of_service', 'num_bytes':1}], \
                                 values=[{'attr_name':'pdr_id', 'num_bytes':4}, \
                                         {'attr_name':'fseid', 'num_bytes':4}, \
