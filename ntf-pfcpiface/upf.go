@@ -433,24 +433,26 @@ func (u *upf) addPDR(ctx context.Context, done chan<- bool, p pdr) {
 			Gate:     uint64(p.needDecap),
 			Priority: int64(math.MaxUint32 - p.precedence),
 			Values: []*pb.FieldData{
-				intEnc(uint64(p.srcIface)),     /* src_iface */
-				intEnc(uint64(p.tunnelIP4Dst)), /* tunnel_ipv4_dst */
-				intEnc(uint64(p.tunnelTEID)),   /* enb_teid */
-				intEnc(uint64(p.srcIP)),        /* ueaddr ip*/
-				intEnc(uint64(p.dstIP)),        /* inet ip */
-				intEnc(uint64(p.srcPort)),      /* ue port */
-				intEnc(uint64(p.dstPort)),      /* inet port */
-				intEnc(uint64(p.proto)),        /* proto id */
+				intEnc(uint64(p.srcIface)),      /* src_iface */
+				intEnc(uint64(p.tunnelIP4Dst)),  /* tunnel_ipv4_dst */
+				intEnc(uint64(p.tunnelTEID)),    /* enb_teid */
+				intEnc(uint64(p.srcIP)),         /* ueaddr ip*/
+				intEnc(uint64(p.dstIP)),         /* inet ip */
+				intEnc(uint64(p.srcPort)),       /* ue port */
+				intEnc(uint64(p.dstPort)),       /* inet port */
+				intEnc(uint64(p.proto)),         /* proto id */
+				intEnc(uint64(p.typeOfService)), /* type of service (DSCP) */
 			},
 			Masks: []*pb.FieldData{
-				intEnc(uint64(p.srcIfaceMask)),     /* src_iface-mask */
-				intEnc(uint64(p.tunnelIP4DstMask)), /* tunnel_ipv4_dst-mask */
-				intEnc(uint64(p.tunnelTEIDMask)),   /* enb_teid-mask */
-				intEnc(uint64(p.srcIPMask)),        /* ueaddr ip-mask */
-				intEnc(uint64(p.dstIPMask)),        /* inet ip-mask */
-				intEnc(uint64(p.srcPortMask)),      /* ue port-mask */
-				intEnc(uint64(p.dstPortMask)),      /* inet port-mask */
-				intEnc(uint64(p.protoMask)),        /* proto id-mask */
+				intEnc(uint64(p.srcIfaceMask)),      /* src_iface-mask */
+				intEnc(uint64(p.tunnelIP4DstMask)),  /* tunnel_ipv4_dst-mask */
+				intEnc(uint64(p.tunnelTEIDMask)),    /* enb_teid-mask */
+				intEnc(uint64(p.srcIPMask)),         /* ueaddr ip-mask */
+				intEnc(uint64(p.dstIPMask)),         /* inet ip-mask */
+				intEnc(uint64(p.srcPortMask)),       /* ue port-mask */
+				intEnc(uint64(p.dstPortMask)),       /* inet port-mask */
+				intEnc(uint64(p.protoMask)),         /* proto id-mask */
+				intEnc(uint64(p.typeOfServiceMask)), /* tos/DSCP-mask */
 			},
 			Valuesv: []*pb.FieldData{
 				intEnc(uint64(p.pdrID)), /* pdr-id */
@@ -477,24 +479,26 @@ func (u *upf) delPDR(ctx context.Context, done chan<- bool, p pdr) {
 
 		f := &pb.WildcardMatchCommandDeleteArg{
 			Values: []*pb.FieldData{
-				intEnc(uint64(p.srcIface)),     /* src_iface */
-				intEnc(uint64(p.tunnelIP4Dst)), /* tunnel_ipv4_dst */
-				intEnc(uint64(p.tunnelTEID)),   /* enb_teid */
-				intEnc(uint64(p.srcIP)),        /* ueaddr ip*/
-				intEnc(uint64(p.dstIP)),        /* inet ip */
-				intEnc(uint64(p.srcPort)),      /* ue port */
-				intEnc(uint64(p.dstPort)),      /* inet port */
-				intEnc(uint64(p.proto)),        /* proto id */
+				intEnc(uint64(p.srcIface)),      /* src_iface */
+				intEnc(uint64(p.tunnelIP4Dst)),  /* tunnel_ipv4_dst */
+				intEnc(uint64(p.tunnelTEID)),    /* enb_teid */
+				intEnc(uint64(p.srcIP)),         /* ueaddr ip*/
+				intEnc(uint64(p.dstIP)),         /* inet ip */
+				intEnc(uint64(p.srcPort)),       /* ue port */
+				intEnc(uint64(p.dstPort)),       /* inet port */
+				intEnc(uint64(p.proto)),         /* proto id */
+				intEnc(uint64(p.typeOfService)), /* type of service (DSCP) */
 			},
 			Masks: []*pb.FieldData{
-				intEnc(uint64(p.srcIfaceMask)),     /* src_iface-mask */
-				intEnc(uint64(p.tunnelIP4DstMask)), /* tunnel_ipv4_dst-mask */
-				intEnc(uint64(p.tunnelTEIDMask)),   /* enb_teid-mask */
-				intEnc(uint64(p.srcIPMask)),        /* ueaddr ip-mask */
-				intEnc(uint64(p.dstIPMask)),        /* inet ip-mask */
-				intEnc(uint64(p.srcPortMask)),      /* ue port-mask */
-				intEnc(uint64(p.dstPortMask)),      /* inet port-mask */
-				intEnc(uint64(p.protoMask)),        /* proto id-mask */
+				intEnc(uint64(p.srcIfaceMask)),      /* src_iface-mask */
+				intEnc(uint64(p.tunnelIP4DstMask)),  /* tunnel_ipv4_dst-mask */
+				intEnc(uint64(p.tunnelTEIDMask)),    /* enb_teid-mask */
+				intEnc(uint64(p.srcIPMask)),         /* ueaddr ip-mask */
+				intEnc(uint64(p.dstIPMask)),         /* inet ip-mask */
+				intEnc(uint64(p.srcPortMask)),       /* ue port-mask */
+				intEnc(uint64(p.dstPortMask)),       /* inet port-mask */
+				intEnc(uint64(p.protoMask)),         /* proto id-mask */
+				intEnc(uint64(p.typeOfServiceMask)), /* tos/DSCP-mask */
 			},
 		}
 		any, err = ptypes.MarshalAny(f)
