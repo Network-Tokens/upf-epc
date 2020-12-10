@@ -41,6 +41,9 @@ const (
 	n6 = 0x1
 	n9 = 0x2
 
+	n3ded = 0x3
+	n6ded = 0x4
+
 	// far-action specific values
 	farForwardU = 0x0
 	farForwardD = 0x1
@@ -266,6 +269,65 @@ func (u *upf) sim(method string) {
 		}
 
 		fars := []far{farDown, farN6Up, farN9Up}
+
+		// If the IP address is a multiple of 10 then it will be sending
+		// network tokens.  Add some more rules for a dedicated bearer.
+		if i%10 == 0 {
+			pdrs = append(pdrs, pdr{
+				// Downlink PDR
+				srcIface: core,
+				dstIP:    ip2int(ueip) + i,
+
+				srcIfaceMask: 0xFF,
+				dstIPMask:    0xFFFFFFFF,
+
+				precedence: 255,
+
+				fseID:     n3TEID + i,
+				ctrID:     i,
+				farID:     n3ded,
+				needDecap: 0,
+			}, pdr{
+				// Uplink PDR
+				srcIface:      access,
+				tunnelIP4Dst:  ip2int(u.accessIP),
+				tunnelTEID:    n3TEID + i,
+				srcIP:         ip2int(ueip) + i,
+				typeOfService: 0x2a, // TODO: Don't hardcode this
+
+				srcIfaceMask:      0xFF,
+				tunnelIP4DstMask:  0xFFFFFFFF,
+				tunnelTEIDMask:    0xFFFFFFFF,
+				srcIPMask:         0xFFFFFFFF,
+				typeOfServiceMask: 0xFF,
+
+				precedence: 10,
+
+				fseID:     n3TEID + i,
+				ctrID:     i,
+				farID:     n6ded,
+				needDecap: 1,
+			})
+
+			fars = append(fars, far{
+				// Downlink FAR
+				farID: n3,
+				fseID: n3TEID + i + 200000,
+
+				action:       farForwardD,
+				tunnelType:   0x1,
+				tunnelIP4Src: ip2int(u.accessIP),
+				tunnelIP4Dst: ip2int(enbip) + enbIdx,
+				tunnelTEID:   n3TEID + i,
+				tunnelPort:   tunnelPort,
+			}, far{
+				// Uplink FAR
+				farID: n6,
+				fseID: n3TEID + i + 200000,
+
+				action: farForwardU,
+			})
+		}
 
 		switch timeout := 100 * time.Millisecond; method {
 		case "create":
