@@ -26,7 +26,8 @@ const unsigned short UDP_PORT_GTPU = 2152;
 /*----------------------------------------------------------------------------------*/
 void GtpuParser::set_gtp_parsing_attrs(be32_t *sip, be32_t *dip, be16_t *sp,
                                        be16_t *dp, be32_t *teid, be32_t *tipd,
-                                       uint8_t *protoid, bess::Packet *p) {
+                                       uint8_t *protoid, uint8_t *tos,
+                                       bess::Packet *p) {
   /* set src_ip */
   set_attr<uint32_t>(this, src_ip_id, p, sip->raw_value());
   /* set dst_ip */
@@ -41,6 +42,8 @@ void GtpuParser::set_gtp_parsing_attrs(be32_t *sip, be32_t *dip, be16_t *sp,
   set_attr<uint32_t>(this, tunnel_ip4_dst_id, p, tipd->raw_value());
   /* proto_id */
   set_attr<uint8_t>(this, proto_id, p, *protoid);
+  /* tos_id */
+  set_attr<uint8_t>(this, tos_id, p, *tos);
 }
 /*----------------------------------------------------------------------------------*/
 void GtpuParser::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
@@ -67,7 +70,8 @@ void GtpuParser::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
         tcph = (Tcp *)((char *)iph + (iph->header_length << 2));
         set_gtp_parsing_attrs(&iph->src, &iph->dst, &tcph->src_port,
                               &tcph->dst_port, (be32_t *)&_const_val,
-                              (be32_t *)&_const_val, &iph->protocol, p);
+                              (be32_t *)&_const_val, &iph->protocol,
+                              &iph->type_of_service, p);
         break;
       case Ipv4::kUdp:
         udph = (Udp *)((char *)iph + (iph->header_length << 2));
@@ -81,27 +85,32 @@ void GtpuParser::ProcessBatch(Context *ctx, bess::PacketBatch *batch) {
             tcph = (Tcp *)((char *)iph + (iph->header_length << 2));
             set_gtp_parsing_attrs(&iph->src, &iph->dst, &tcph->src_port,
                                   &tcph->dst_port, (be32_t *)&teid,
-                                  &old_iph->dst, &iph->protocol, p);
+                                  &old_iph->dst, &iph->protocol,
+                                  &iph->type_of_service, p);
           } else if (iph->protocol == Ipv4::kUdp) {
             udph = (Udp *)((char *)iph + (iph->header_length << 2));
             set_gtp_parsing_attrs(&iph->src, &iph->dst, &udph->src_port,
                                   &udph->dst_port, (be32_t *)&teid,
-                                  &old_iph->dst, &iph->protocol, p);
+                                  &old_iph->dst, &iph->protocol,
+                                  &iph->type_of_service, p);
           } else {
             set_gtp_parsing_attrs(&iph->src, &iph->dst, (be16_t *)&_const_val,
                                   (be16_t *)&_const_val, (be32_t *)&teid,
-                                  &old_iph->dst, &iph->protocol, p);
+                                  &old_iph->dst, &iph->protocol,
+                                  &iph->type_of_service, p);
           }
         } else {
           set_gtp_parsing_attrs(&iph->src, &iph->dst, &udph->src_port,
                                 &udph->dst_port, (be32_t *)&_const_val,
-                                (be32_t *)&_const_val, &iph->protocol, p);
+                                (be32_t *)&_const_val, &iph->protocol,
+                                &iph->type_of_service, p);
         }
         break;
       case Ipv4::kIcmp: {
         set_gtp_parsing_attrs(&iph->src, &iph->dst, (be16_t *)&_const_val,
                               (be16_t *)&_const_val, (be32_t *)&_const_val,
-                              (be32_t *)&_const_val, &iph->protocol, p);
+                              (be32_t *)&_const_val, &iph->protocol,
+                              &iph->type_of_service, p);
       } break;
       default:
         /* nothing here at the moment */
@@ -124,6 +133,7 @@ CommandResponse GtpuParser::Init(const bess::pb::EmptyArg &) {
   tunnel_ip4_dst_id =
       AddMetadataAttr("tunnel_ipv4_dst", sizeof(uint32_t), AccessMode::kWrite);
   proto_id = AddMetadataAttr("ip_proto", sizeof(uint8_t), AccessMode::kWrite);
+  tos_id = AddMetadataAttr("type_of_service", sizeof(uint8_t), AccessMode::kWrite);
 
   return CommandSuccess();
 }

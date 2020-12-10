@@ -35,7 +35,7 @@ class GtpuParser final : public Module {
   /* set attributes */
   void set_gtp_parsing_attrs(be32_t *sip, be32_t *dip, be16_t *sp, be16_t *dp,
                              be32_t *teid, be32_t *tipd, uint8_t *protoid,
-                             bess::Packet *p);
+                             uint8_t *tos, bess::Packet *p);
   int src_ip_id = -1;
   int dst_ip_id = -1;
   int src_port_id = -1;
@@ -43,6 +43,7 @@ class GtpuParser final : public Module {
   int teid_id = -1;
   int tunnel_ip4_dst_id = -1;
   int proto_id = -1;
+  int tos_id = -1;
 };
 /*----------------------------------------------------------------------------------*/
 #endif  // BESS_MODULES_GTPUPARSER_H_

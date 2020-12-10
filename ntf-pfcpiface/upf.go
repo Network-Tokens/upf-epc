@@ -47,23 +47,25 @@ const (
 )
 
 type pdr struct {
-	srcIface     uint8
-	tunnelIP4Dst uint32
-	tunnelTEID   uint32
-	srcIP        uint32
-	dstIP        uint32
-	srcPort      uint16
-	dstPort      uint16
-	proto        uint8
+	srcIface      uint8
+	tunnelIP4Dst  uint32
+	tunnelTEID    uint32
+	srcIP         uint32
+	dstIP         uint32
+	srcPort       uint16
+	dstPort       uint16
+	proto         uint8
+	typeOfService uint8
 
-	srcIfaceMask     uint8
-	tunnelIP4DstMask uint32
-	tunnelTEIDMask   uint32
-	srcIPMask        uint32
-	dstIPMask        uint32
-	srcPortMask      uint16
-	dstPortMask      uint16
-	protoMask        uint8
+	srcIfaceMask      uint8
+	tunnelIP4DstMask  uint32
+	tunnelTEIDMask    uint32
+	srcIPMask         uint32
+	dstIPMask         uint32
+	srcPortMask       uint16
+	dstPortMask       uint16
+	protoMask         uint8
+	typeOfServiceMask uint8
 
 	precedence uint32
 	pdrID      uint32
