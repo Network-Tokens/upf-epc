@@ -46,8 +46,17 @@
     "": "Number of worker threads. Default: use 1 thread to run both (uplink/downlink) pipelines",
     "workers": 1,
 
-    "": "Whether to enable Network Token Functions",
-    "enable_ntf": false,
+    "": "Network Token Function (NTF) specific settings",
+    "ntf": {
+        "": "Whether to enable NTF",
+        "enabled": false,
+
+        "": "ID of data path",
+        "": "dpid: 1",
+
+        "": "Maximum number of token keys that can be added",
+        "": "max_entries: 64"
+    },
 
     "": "Control plane controller settings",
     "cpiface": {

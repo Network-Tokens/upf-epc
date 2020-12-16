@@ -4,7 +4,6 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net"
 	"strconv"
@@ -14,9 +13,6 @@ import (
 
 	"github.com/wmnsk/go-pfcp/ie"
 	"github.com/wmnsk/go-pfcp/message"
-	"github.com/golang/protobuf/ptypes"
-	pb "github.com/omec-project/upf-epc/pfcpiface/bess_pb"
-	"ntf_pb"
 )
 
 // PktBufSz : buffer size for incoming pkt
@@ -50,12 +46,7 @@ func pfcpifaceMainLoop(upf *upf, accessIP, coreIP, sourceIP, smfName string) {
 	cpConnectionStatus := make(chan bool)
 
 	// Create the table in NTF
-	err := initializeNtf(upf, "ntf0", 1, 64)
-	if err != nil {
-		log.Fatalln("Error initializing NTF:", err)
-	}
-
-	pfdRules = NewPfdRules(upf, 1)
+	pfdRules = NewPfdRules(upf)
 
 	// Verify IP + Port binding
 	laddr, err := net.ResolveUDPAddr("udp", sourceIP+":"+PFCPPort)
@@ -508,68 +499,6 @@ func getSeqNum() uint32 {
 	defer seqNum.mux.Unlock()
 	seqNum.seq++
 	return seqNum.seq
-}
-
-func initializeNtf(upf *upf, moduleName string, dpid int, maxEntries int) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 100 * time.Millisecond)
-	defer cancel()
-
-	if err := upf.pauseAll(); err != nil {
-		return err
-	}
-
-	// Delete the existing table first
-	any, err := ptypes.MarshalAny(&ntf_pb.NtfTableDeleteArg{
-		Dpid: uint32(dpid),
-	})
-	if err != nil {
-		print("Error:", err)
-		return err
-	}
-
-	cr, err := upf.client.ModuleCommand(ctx, &pb.CommandRequest{
-		Name: "ntf0",
-		Cmd: "table_delete",
-		Arg: any,
-	})
-	log.Println("table_delete:", cr)
-
-	createArg := &ntf_pb.NtfTableCreateArg{
-		Dpid: uint32(dpid),
-		MaxEntries: uint32(maxEntries),
-	}
-	print("Dpid in struct:", createArg.Dpid)
-	any, err = ptypes.MarshalAny(createArg)
-	if err != nil {
-		return err
-	}
-
-	var decoded ntf_pb.NtfTableCreateArg
-	err = ptypes.UnmarshalAny(any, &decoded)
-	if err != nil {
-		print("Error unmarshalling:", err)
-	}
-	log.Println("Decoded:", decoded)
-
-	log.Println("createArg:", createArg)
-	log.Println("arg:", any)
-	cr, err = upf.client.ModuleCommand(ctx, &pb.CommandRequest{
-		Name: "ntf0",
-		Cmd: "table_create",
-		Arg: any,
-	})
-	log.Println("table_create:", cr)
-
-	if err != nil {
-		return err
-	}
-	log.Println("ntf.table_create():", cr)
-
-	if err = upf.resumeAll(); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func manageSmfConnection(n4LocalIP string, n3ip string, n4Dst string, conn *net.UDPConn, cpConnectionStatus chan bool) {

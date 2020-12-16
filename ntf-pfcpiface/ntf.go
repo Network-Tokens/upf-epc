@@ -19,7 +19,6 @@ type ntfUserCentricToken struct {
 
 type pfdRuleEntry struct {
 	upf        *upf
-	dpid       uint32
 	pfdAppId   uint32
 	config     *ntfUserCentricToken
 }
@@ -27,15 +26,13 @@ type pfdRuleEntry struct {
 type PfdRules struct {
 	rules map[uint32]*pfdRuleEntry
 	upf     *upf
-	dpid    uint32
 }
 
-func NewPfdRules(upf *upf, dpid uint32) *PfdRules {
+func NewPfdRules(upf *upf) *PfdRules {
 	log.Println("NewPfdRules")
 	config := new(PfdRules)
 	config.rules = make(map[uint32]*pfdRuleEntry)
 	config.upf = upf
-	config.dpid = dpid
 	return config
 }
 
@@ -43,7 +40,6 @@ func (pfdRules *PfdRules) NewPfdRule(pfdAppId uint32) *pfdRuleEntry {
 	log.Println("NewPfdRule")
 	entry := new(pfdRuleEntry)
 	entry.upf = pfdRules.upf
-	entry.dpid = pfdRules.dpid
 	entry.pfdAppId = pfdAppId
     pfdRules.rules[pfdAppId] = entry
 	return entry
@@ -93,11 +89,10 @@ func (entry *pfdRuleEntry) createBessEntry(upf *upf) error {
 		EncryptionKey: entry.config.EncryptionKey,
 	}
 
-	arg := ntf_pb.NtfEntryCreateArg{
-		Dpid:      entry.dpid,
+	arg := ntf_pb.NTFEntryCreateArg{
 		Token:     &token,
-		SetDscp:   &ntf_pb.NtfEntryCreateArg_Dscp{entry.config.Dscp},
-		SetRuleId: &ntf_pb.NtfEntryCreateArg_RuleId{entry.pfdAppId},
+		SetDscp:   &ntf_pb.NTFEntryCreateArg_Dscp{entry.config.Dscp},
+		SetRuleId: &ntf_pb.NTFEntryCreateArg_RuleId{entry.pfdAppId},
 	}
 
 	any, err := ptypes.MarshalAny(&arg)
@@ -109,7 +104,7 @@ func (entry *pfdRuleEntry) createBessEntry(upf *upf) error {
 	defer cancel()
 
 	cr, err := upf.client.ModuleCommand(ctx, &pb.CommandRequest{
-		Name: "ntf0",
+		Name: "ntf",
 		Cmd:  "entry_create",
 		Arg:  any,
 	})

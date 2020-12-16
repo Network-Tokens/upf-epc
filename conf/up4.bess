@@ -55,7 +55,7 @@ if parser.mode == 'sim':
                                     parser.sim_start_aupf_ip, core_ip[0],
                                     parser.sim_n9_app_ip, parser.sim_start_ue_ip,
                                     parser.sim_start_n9_teid)]
-    if parser.enable_ntf:
+    if parser.ntf_enabled:
         # Every 30th packet will be a STUN packet.  With 5000 flows, this
         # results in about 1000 flows with network tokens, and every 3rd packet
         # is a STUN packet with a token.  This is not a good representation of
@@ -135,19 +135,6 @@ for idx, iface in enumerate(interfaces):
 
 
 # ====================================================
-#       Network Token Functions Setup
-# ====================================================
-
-ntf = None
-if parser.enable_ntf:
-    try:
-        ntf = NTF()
-    except NameError:
-		# Handling NameError here means that the UPF will still start, even if
-		# NTF support is not compiled in.
-        pass
-
-# ====================================================
 # 	Shared Pipeline (DL + UL)
 # ====================================================
 
@@ -178,11 +165,17 @@ linkMerge::Merge() \
                                         {'attr_name':'far_id', 'num_bytes':4}]):noGTPUDecap \
     -> preQoSCounter::Counter(name_id='ctr_id', check_exist=True, total=parser.max_sessions)
 
-# Insert NTF module, if enabled
 _in = preQoSCounter
-if ntf:
-  _in -> ntf
-  _in = ntf
+
+# Insert NTF module, if enabled
+if parser.ntf_enabled:
+    try:
+        _in -> ntf::NTF(dpid=parser.ntf_dpid, max_entries=parser.ntf_max_entries)
+        _in = ntf
+    except NameError:
+        # Handling NameError here means that the UPF will still start, even if
+        # NTF support is not compiled in.
+        pass
 
 _in -> farLookup::ExactMatch(fields=[{'attr_name':'far_id', 'num_bytes':4}, \
                                      {'attr_name':'fseid', 'num_bytes':4}], \

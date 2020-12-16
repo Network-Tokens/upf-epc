@@ -43,7 +43,9 @@ class Parser:
         self.access_ifname = None
         self.core_ifname = None
         self.interfaces = dict()
-        self.enable_ntf = False
+        self.ntf_enabled = False
+        self.ntf_dpid = None
+        self.ntf_max_entries = None
 
     def parse(self, ifaces):
         # Maximum number of flows to manage ip4 frags for re-assembly
@@ -130,6 +132,14 @@ class Parser:
 
         # Network Token Function
         try:
-            self.enable_ntf = bool(self.conf['enable_ntf'])
+            self.ntf_enabled = bool(self.conf['ntf']['enabled'])
+            if self.ntf_enabled:
+                try:
+                    self.ntf_dpid = int(self.conf['ntf']['dpid'])
+                    self.ntf_max_entries = int(self.conf['ntf']['max_entries'])
+                    print('Network Token Function enabled')
+                except KeyError as ex:
+                    msg = 'Network Token Function disabled (%s missing)'
+                    print(msg % ex.message)
         except KeyError:
             print('Network Token Function disabled')

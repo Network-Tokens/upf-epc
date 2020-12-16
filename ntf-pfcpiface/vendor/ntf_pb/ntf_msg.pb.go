@@ -20,7 +20,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type NtfTableCreateArg struct {
+type NTFArg struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -29,8 +29,8 @@ type NtfTableCreateArg struct {
 	MaxEntries uint32 `protobuf:"varint,2,opt,name=max_entries,json=maxEntries,proto3" json:"max_entries,omitempty"`
 }
 
-func (x *NtfTableCreateArg) Reset() {
-	*x = NtfTableCreateArg{}
+func (x *NTFArg) Reset() {
+	*x = NTFArg{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_ntf_msg_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -38,13 +38,13 @@ func (x *NtfTableCreateArg) Reset() {
 	}
 }
 
-func (x *NtfTableCreateArg) String() string {
+func (x *NTFArg) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*NtfTableCreateArg) ProtoMessage() {}
+func (*NTFArg) ProtoMessage() {}
 
-func (x *NtfTableCreateArg) ProtoReflect() protoreflect.Message {
+func (x *NTFArg) ProtoReflect() protoreflect.Message {
 	mi := &file_ntf_msg_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -56,68 +56,21 @@ func (x *NtfTableCreateArg) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use NtfTableCreateArg.ProtoReflect.Descriptor instead.
-func (*NtfTableCreateArg) Descriptor() ([]byte, []int) {
+// Deprecated: Use NTFArg.ProtoReflect.Descriptor instead.
+func (*NTFArg) Descriptor() ([]byte, []int) {
 	return file_ntf_msg_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *NtfTableCreateArg) GetDpid() uint32 {
+func (x *NTFArg) GetDpid() uint32 {
 	if x != nil {
 		return x.Dpid
 	}
 	return 0
 }
 
-func (x *NtfTableCreateArg) GetMaxEntries() uint32 {
+func (x *NTFArg) GetMaxEntries() uint32 {
 	if x != nil {
 		return x.MaxEntries
-	}
-	return 0
-}
-
-type NtfTableDeleteArg struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Dpid uint32 `protobuf:"varint,1,opt,name=dpid,proto3" json:"dpid,omitempty"`
-}
-
-func (x *NtfTableDeleteArg) Reset() {
-	*x = NtfTableDeleteArg{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_ntf_msg_proto_msgTypes[1]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *NtfTableDeleteArg) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*NtfTableDeleteArg) ProtoMessage() {}
-
-func (x *NtfTableDeleteArg) ProtoReflect() protoreflect.Message {
-	mi := &file_ntf_msg_proto_msgTypes[1]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use NtfTableDeleteArg.ProtoReflect.Descriptor instead.
-func (*NtfTableDeleteArg) Descriptor() ([]byte, []int) {
-	return file_ntf_msg_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *NtfTableDeleteArg) GetDpid() uint32 {
-	if x != nil {
-		return x.Dpid
 	}
 	return 0
 }
@@ -135,7 +88,7 @@ type UserCentricNetworkToken struct {
 func (x *UserCentricNetworkToken) Reset() {
 	*x = UserCentricNetworkToken{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ntf_msg_proto_msgTypes[2]
+		mi := &file_ntf_msg_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -148,7 +101,7 @@ func (x *UserCentricNetworkToken) String() string {
 func (*UserCentricNetworkToken) ProtoMessage() {}
 
 func (x *UserCentricNetworkToken) ProtoReflect() protoreflect.Message {
-	mi := &file_ntf_msg_proto_msgTypes[2]
+	mi := &file_ntf_msg_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -161,7 +114,7 @@ func (x *UserCentricNetworkToken) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserCentricNetworkToken.ProtoReflect.Descriptor instead.
 func (*UserCentricNetworkToken) Descriptor() ([]byte, []int) {
-	return file_ntf_msg_proto_rawDescGZIP(), []int{2}
+	return file_ntf_msg_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *UserCentricNetworkToken) GetAppId() uint32 {
@@ -185,23 +138,123 @@ func (x *UserCentricNetworkToken) GetBlacklist() []uint64 {
 	return nil
 }
 
-type NtfEntryCreateArg struct {
+type NTFEntryCreateArg struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Dpid  uint32                   `protobuf:"varint,1,opt,name=dpid,proto3" json:"dpid,omitempty"`
-	Token *UserCentricNetworkToken `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
+	Token *UserCentricNetworkToken `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	// Types that are assignable to SetDscp:
-	//	*NtfEntryCreateArg_Dscp
-	SetDscp isNtfEntryCreateArg_SetDscp `protobuf_oneof:"set_dscp"`
+	//	*NTFEntryCreateArg_Dscp
+	SetDscp isNTFEntryCreateArg_SetDscp `protobuf_oneof:"set_dscp"`
 	// Types that are assignable to SetRuleId:
-	//	*NtfEntryCreateArg_RuleId
-	SetRuleId isNtfEntryCreateArg_SetRuleId `protobuf_oneof:"set_rule_id"`
+	//	*NTFEntryCreateArg_RuleId
+	SetRuleId isNTFEntryCreateArg_SetRuleId `protobuf_oneof:"set_rule_id"`
 }
 
-func (x *NtfEntryCreateArg) Reset() {
-	*x = NtfEntryCreateArg{}
+func (x *NTFEntryCreateArg) Reset() {
+	*x = NTFEntryCreateArg{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ntf_msg_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *NTFEntryCreateArg) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NTFEntryCreateArg) ProtoMessage() {}
+
+func (x *NTFEntryCreateArg) ProtoReflect() protoreflect.Message {
+	mi := &file_ntf_msg_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NTFEntryCreateArg.ProtoReflect.Descriptor instead.
+func (*NTFEntryCreateArg) Descriptor() ([]byte, []int) {
+	return file_ntf_msg_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *NTFEntryCreateArg) GetToken() *UserCentricNetworkToken {
+	if x != nil {
+		return x.Token
+	}
+	return nil
+}
+
+func (m *NTFEntryCreateArg) GetSetDscp() isNTFEntryCreateArg_SetDscp {
+	if m != nil {
+		return m.SetDscp
+	}
+	return nil
+}
+
+func (x *NTFEntryCreateArg) GetDscp() uint32 {
+	if x, ok := x.GetSetDscp().(*NTFEntryCreateArg_Dscp); ok {
+		return x.Dscp
+	}
+	return 0
+}
+
+func (m *NTFEntryCreateArg) GetSetRuleId() isNTFEntryCreateArg_SetRuleId {
+	if m != nil {
+		return m.SetRuleId
+	}
+	return nil
+}
+
+func (x *NTFEntryCreateArg) GetRuleId() uint32 {
+	if x, ok := x.GetSetRuleId().(*NTFEntryCreateArg_RuleId); ok {
+		return x.RuleId
+	}
+	return 0
+}
+
+type isNTFEntryCreateArg_SetDscp interface {
+	isNTFEntryCreateArg_SetDscp()
+}
+
+type NTFEntryCreateArg_Dscp struct {
+	Dscp uint32 `protobuf:"varint,2,opt,name=dscp,proto3,oneof"`
+}
+
+func (*NTFEntryCreateArg_Dscp) isNTFEntryCreateArg_SetDscp() {}
+
+type isNTFEntryCreateArg_SetRuleId interface {
+	isNTFEntryCreateArg_SetRuleId()
+}
+
+type NTFEntryCreateArg_RuleId struct {
+	RuleId uint32 `protobuf:"varint,3,opt,name=rule_id,json=ruleId,proto3,oneof"`
+}
+
+func (*NTFEntryCreateArg_RuleId) isNTFEntryCreateArg_SetRuleId() {}
+
+type NTFEntryModifyArg struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Token *UserCentricNetworkToken `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	// Types that are assignable to SetDscp:
+	//	*NTFEntryModifyArg_Dscp
+	SetDscp isNTFEntryModifyArg_SetDscp `protobuf_oneof:"set_dscp"`
+	// Types that are assignable to SetRuleId:
+	//	*NTFEntryModifyArg_RuleId
+	SetRuleId isNTFEntryModifyArg_SetRuleId `protobuf_oneof:"set_rule_id"`
+}
+
+func (x *NTFEntryModifyArg) Reset() {
+	*x = NTFEntryModifyArg{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_ntf_msg_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -209,13 +262,13 @@ func (x *NtfEntryCreateArg) Reset() {
 	}
 }
 
-func (x *NtfEntryCreateArg) String() string {
+func (x *NTFEntryModifyArg) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*NtfEntryCreateArg) ProtoMessage() {}
+func (*NTFEntryModifyArg) ProtoMessage() {}
 
-func (x *NtfEntryCreateArg) ProtoReflect() protoreflect.Message {
+func (x *NTFEntryModifyArg) ProtoReflect() protoreflect.Message {
 	mi := &file_ntf_msg_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -227,90 +280,76 @@ func (x *NtfEntryCreateArg) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use NtfEntryCreateArg.ProtoReflect.Descriptor instead.
-func (*NtfEntryCreateArg) Descriptor() ([]byte, []int) {
+// Deprecated: Use NTFEntryModifyArg.ProtoReflect.Descriptor instead.
+func (*NTFEntryModifyArg) Descriptor() ([]byte, []int) {
 	return file_ntf_msg_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *NtfEntryCreateArg) GetDpid() uint32 {
-	if x != nil {
-		return x.Dpid
-	}
-	return 0
-}
-
-func (x *NtfEntryCreateArg) GetToken() *UserCentricNetworkToken {
+func (x *NTFEntryModifyArg) GetToken() *UserCentricNetworkToken {
 	if x != nil {
 		return x.Token
 	}
 	return nil
 }
 
-func (m *NtfEntryCreateArg) GetSetDscp() isNtfEntryCreateArg_SetDscp {
+func (m *NTFEntryModifyArg) GetSetDscp() isNTFEntryModifyArg_SetDscp {
 	if m != nil {
 		return m.SetDscp
 	}
 	return nil
 }
 
-func (x *NtfEntryCreateArg) GetDscp() uint32 {
-	if x, ok := x.GetSetDscp().(*NtfEntryCreateArg_Dscp); ok {
+func (x *NTFEntryModifyArg) GetDscp() uint32 {
+	if x, ok := x.GetSetDscp().(*NTFEntryModifyArg_Dscp); ok {
 		return x.Dscp
 	}
 	return 0
 }
 
-func (m *NtfEntryCreateArg) GetSetRuleId() isNtfEntryCreateArg_SetRuleId {
+func (m *NTFEntryModifyArg) GetSetRuleId() isNTFEntryModifyArg_SetRuleId {
 	if m != nil {
 		return m.SetRuleId
 	}
 	return nil
 }
 
-func (x *NtfEntryCreateArg) GetRuleId() uint32 {
-	if x, ok := x.GetSetRuleId().(*NtfEntryCreateArg_RuleId); ok {
+func (x *NTFEntryModifyArg) GetRuleId() uint32 {
+	if x, ok := x.GetSetRuleId().(*NTFEntryModifyArg_RuleId); ok {
 		return x.RuleId
 	}
 	return 0
 }
 
-type isNtfEntryCreateArg_SetDscp interface {
-	isNtfEntryCreateArg_SetDscp()
+type isNTFEntryModifyArg_SetDscp interface {
+	isNTFEntryModifyArg_SetDscp()
 }
 
-type NtfEntryCreateArg_Dscp struct {
-	Dscp uint32 `protobuf:"varint,3,opt,name=dscp,proto3,oneof"`
+type NTFEntryModifyArg_Dscp struct {
+	Dscp uint32 `protobuf:"varint,2,opt,name=dscp,proto3,oneof"`
 }
 
-func (*NtfEntryCreateArg_Dscp) isNtfEntryCreateArg_SetDscp() {}
+func (*NTFEntryModifyArg_Dscp) isNTFEntryModifyArg_SetDscp() {}
 
-type isNtfEntryCreateArg_SetRuleId interface {
-	isNtfEntryCreateArg_SetRuleId()
+type isNTFEntryModifyArg_SetRuleId interface {
+	isNTFEntryModifyArg_SetRuleId()
 }
 
-type NtfEntryCreateArg_RuleId struct {
-	RuleId uint32 `protobuf:"varint,4,opt,name=rule_id,json=ruleId,proto3,oneof"`
+type NTFEntryModifyArg_RuleId struct {
+	RuleId uint32 `protobuf:"varint,3,opt,name=rule_id,json=ruleId,proto3,oneof"`
 }
 
-func (*NtfEntryCreateArg_RuleId) isNtfEntryCreateArg_SetRuleId() {}
+func (*NTFEntryModifyArg_RuleId) isNTFEntryModifyArg_SetRuleId() {}
 
-type NtfEntryModifyArg struct {
+type NTFEntryDeleteArg struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Dpid  uint32                   `protobuf:"varint,1,opt,name=dpid,proto3" json:"dpid,omitempty"`
-	Token *UserCentricNetworkToken `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
-	// Types that are assignable to SetDscp:
-	//	*NtfEntryModifyArg_Dscp
-	SetDscp isNtfEntryModifyArg_SetDscp `protobuf_oneof:"set_dscp"`
-	// Types that are assignable to SetRuleId:
-	//	*NtfEntryModifyArg_RuleId
-	SetRuleId isNtfEntryModifyArg_SetRuleId `protobuf_oneof:"set_rule_id"`
+	AppId uint32 `protobuf:"varint,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
 }
 
-func (x *NtfEntryModifyArg) Reset() {
-	*x = NtfEntryModifyArg{}
+func (x *NTFEntryDeleteArg) Reset() {
+	*x = NTFEntryDeleteArg{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_ntf_msg_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -318,13 +357,13 @@ func (x *NtfEntryModifyArg) Reset() {
 	}
 }
 
-func (x *NtfEntryModifyArg) String() string {
+func (x *NTFEntryDeleteArg) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*NtfEntryModifyArg) ProtoMessage() {}
+func (*NTFEntryDeleteArg) ProtoMessage() {}
 
-func (x *NtfEntryModifyArg) ProtoReflect() protoreflect.Message {
+func (x *NTFEntryDeleteArg) ProtoReflect() protoreflect.Message {
 	mi := &file_ntf_msg_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -336,122 +375,12 @@ func (x *NtfEntryModifyArg) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use NtfEntryModifyArg.ProtoReflect.Descriptor instead.
-func (*NtfEntryModifyArg) Descriptor() ([]byte, []int) {
+// Deprecated: Use NTFEntryDeleteArg.ProtoReflect.Descriptor instead.
+func (*NTFEntryDeleteArg) Descriptor() ([]byte, []int) {
 	return file_ntf_msg_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *NtfEntryModifyArg) GetDpid() uint32 {
-	if x != nil {
-		return x.Dpid
-	}
-	return 0
-}
-
-func (x *NtfEntryModifyArg) GetToken() *UserCentricNetworkToken {
-	if x != nil {
-		return x.Token
-	}
-	return nil
-}
-
-func (m *NtfEntryModifyArg) GetSetDscp() isNtfEntryModifyArg_SetDscp {
-	if m != nil {
-		return m.SetDscp
-	}
-	return nil
-}
-
-func (x *NtfEntryModifyArg) GetDscp() uint32 {
-	if x, ok := x.GetSetDscp().(*NtfEntryModifyArg_Dscp); ok {
-		return x.Dscp
-	}
-	return 0
-}
-
-func (m *NtfEntryModifyArg) GetSetRuleId() isNtfEntryModifyArg_SetRuleId {
-	if m != nil {
-		return m.SetRuleId
-	}
-	return nil
-}
-
-func (x *NtfEntryModifyArg) GetRuleId() uint32 {
-	if x, ok := x.GetSetRuleId().(*NtfEntryModifyArg_RuleId); ok {
-		return x.RuleId
-	}
-	return 0
-}
-
-type isNtfEntryModifyArg_SetDscp interface {
-	isNtfEntryModifyArg_SetDscp()
-}
-
-type NtfEntryModifyArg_Dscp struct {
-	Dscp uint32 `protobuf:"varint,3,opt,name=dscp,proto3,oneof"`
-}
-
-func (*NtfEntryModifyArg_Dscp) isNtfEntryModifyArg_SetDscp() {}
-
-type isNtfEntryModifyArg_SetRuleId interface {
-	isNtfEntryModifyArg_SetRuleId()
-}
-
-type NtfEntryModifyArg_RuleId struct {
-	RuleId uint32 `protobuf:"varint,4,opt,name=rule_id,json=ruleId,proto3,oneof"`
-}
-
-func (*NtfEntryModifyArg_RuleId) isNtfEntryModifyArg_SetRuleId() {}
-
-type NtfEntryDeleteArg struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Dpid  uint32 `protobuf:"varint,1,opt,name=dpid,proto3" json:"dpid,omitempty"`
-	AppId uint32 `protobuf:"varint,2,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-}
-
-func (x *NtfEntryDeleteArg) Reset() {
-	*x = NtfEntryDeleteArg{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_ntf_msg_proto_msgTypes[5]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *NtfEntryDeleteArg) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*NtfEntryDeleteArg) ProtoMessage() {}
-
-func (x *NtfEntryDeleteArg) ProtoReflect() protoreflect.Message {
-	mi := &file_ntf_msg_proto_msgTypes[5]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use NtfEntryDeleteArg.ProtoReflect.Descriptor instead.
-func (*NtfEntryDeleteArg) Descriptor() ([]byte, []int) {
-	return file_ntf_msg_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *NtfEntryDeleteArg) GetDpid() uint32 {
-	if x != nil {
-		return x.Dpid
-	}
-	return 0
-}
-
-func (x *NtfEntryDeleteArg) GetAppId() uint32 {
+func (x *NTFEntryDeleteArg) GetAppId() uint32 {
 	if x != nil {
 		return x.AppId
 	}
@@ -462,46 +391,39 @@ var File_ntf_msg_proto protoreflect.FileDescriptor
 
 var file_ntf_msg_proto_rawDesc = []byte{
 	0x0a, 0x0d, 0x6e, 0x74, 0x66, 0x5f, 0x6d, 0x73, 0x67, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12,
-	0x06, 0x6e, 0x74, 0x66, 0x2e, 0x70, 0x62, 0x22, 0x48, 0x0a, 0x11, 0x4e, 0x74, 0x66, 0x54, 0x61,
-	0x62, 0x6c, 0x65, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x41, 0x72, 0x67, 0x12, 0x12, 0x0a, 0x04,
-	0x64, 0x70, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x64, 0x70, 0x69, 0x64,
-	0x12, 0x1f, 0x0a, 0x0b, 0x6d, 0x61, 0x78, 0x5f, 0x65, 0x6e, 0x74, 0x72, 0x69, 0x65, 0x73, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x0a, 0x6d, 0x61, 0x78, 0x45, 0x6e, 0x74, 0x72, 0x69, 0x65,
-	0x73, 0x22, 0x27, 0x0a, 0x11, 0x4e, 0x74, 0x66, 0x54, 0x61, 0x62, 0x6c, 0x65, 0x44, 0x65, 0x6c,
-	0x65, 0x74, 0x65, 0x41, 0x72, 0x67, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x70, 0x69, 0x64, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x64, 0x70, 0x69, 0x64, 0x22, 0x75, 0x0a, 0x17, 0x55, 0x73,
-	0x65, 0x72, 0x43, 0x65, 0x6e, 0x74, 0x72, 0x69, 0x63, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b,
-	0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x12, 0x15, 0x0a, 0x06, 0x61, 0x70, 0x70, 0x5f, 0x69, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x05, 0x61, 0x70, 0x70, 0x49, 0x64, 0x12, 0x25, 0x0a, 0x0e,
-	0x65, 0x6e, 0x63, 0x72, 0x79, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x6b, 0x65, 0x79, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x65, 0x6e, 0x63, 0x72, 0x79, 0x70, 0x74, 0x69, 0x6f, 0x6e,
-	0x4b, 0x65, 0x79, 0x12, 0x1c, 0x0a, 0x09, 0x62, 0x6c, 0x61, 0x63, 0x6b, 0x6c, 0x69, 0x73, 0x74,
-	0x18, 0x03, 0x20, 0x03, 0x28, 0x04, 0x52, 0x09, 0x62, 0x6c, 0x61, 0x63, 0x6b, 0x6c, 0x69, 0x73,
-	0x74, 0x22, 0xaa, 0x01, 0x0a, 0x11, 0x4e, 0x74, 0x66, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x43, 0x72,
-	0x65, 0x61, 0x74, 0x65, 0x41, 0x72, 0x67, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x70, 0x69, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x64, 0x70, 0x69, 0x64, 0x12, 0x35, 0x0a, 0x05, 0x74,
-	0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1f, 0x2e, 0x6e, 0x74, 0x66,
-	0x2e, 0x70, 0x62, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x43, 0x65, 0x6e, 0x74, 0x72, 0x69, 0x63, 0x4e,
-	0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x05, 0x74, 0x6f, 0x6b,
-	0x65, 0x6e, 0x12, 0x14, 0x0a, 0x04, 0x64, 0x73, 0x63, 0x70, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0d,
-	0x48, 0x00, 0x52, 0x04, 0x64, 0x73, 0x63, 0x70, 0x12, 0x19, 0x0a, 0x07, 0x72, 0x75, 0x6c, 0x65,
-	0x5f, 0x69, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0d, 0x48, 0x01, 0x52, 0x06, 0x72, 0x75, 0x6c,
-	0x65, 0x49, 0x64, 0x42, 0x0a, 0x0a, 0x08, 0x73, 0x65, 0x74, 0x5f, 0x64, 0x73, 0x63, 0x70, 0x42,
-	0x0d, 0x0a, 0x0b, 0x73, 0x65, 0x74, 0x5f, 0x72, 0x75, 0x6c, 0x65, 0x5f, 0x69, 0x64, 0x22, 0xaa,
-	0x01, 0x0a, 0x11, 0x4e, 0x74, 0x66, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x4d, 0x6f, 0x64, 0x69, 0x66,
-	0x79, 0x41, 0x72, 0x67, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x70, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x0d, 0x52, 0x04, 0x64, 0x70, 0x69, 0x64, 0x12, 0x35, 0x0a, 0x05, 0x74, 0x6f, 0x6b, 0x65,
-	0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1f, 0x2e, 0x6e, 0x74, 0x66, 0x2e, 0x70, 0x62,
-	0x2e, 0x55, 0x73, 0x65, 0x72, 0x43, 0x65, 0x6e, 0x74, 0x72, 0x69, 0x63, 0x4e, 0x65, 0x74, 0x77,
-	0x6f, 0x72, 0x6b, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x12,
-	0x14, 0x0a, 0x04, 0x64, 0x73, 0x63, 0x70, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0d, 0x48, 0x00, 0x52,
-	0x04, 0x64, 0x73, 0x63, 0x70, 0x12, 0x19, 0x0a, 0x07, 0x72, 0x75, 0x6c, 0x65, 0x5f, 0x69, 0x64,
-	0x18, 0x04, 0x20, 0x01, 0x28, 0x0d, 0x48, 0x01, 0x52, 0x06, 0x72, 0x75, 0x6c, 0x65, 0x49, 0x64,
-	0x42, 0x0a, 0x0a, 0x08, 0x73, 0x65, 0x74, 0x5f, 0x64, 0x73, 0x63, 0x70, 0x42, 0x0d, 0x0a, 0x0b,
-	0x73, 0x65, 0x74, 0x5f, 0x72, 0x75, 0x6c, 0x65, 0x5f, 0x69, 0x64, 0x22, 0x3e, 0x0a, 0x11, 0x4e,
-	0x74, 0x66, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x72, 0x67,
-	0x12, 0x12, 0x0a, 0x04, 0x64, 0x70, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04,
-	0x64, 0x70, 0x69, 0x64, 0x12, 0x15, 0x0a, 0x06, 0x61, 0x70, 0x70, 0x5f, 0x69, 0x64, 0x18, 0x02,
+	0x06, 0x6e, 0x74, 0x66, 0x2e, 0x70, 0x62, 0x22, 0x3d, 0x0a, 0x06, 0x4e, 0x54, 0x46, 0x41, 0x72,
+	0x67, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x70, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52,
+	0x04, 0x64, 0x70, 0x69, 0x64, 0x12, 0x1f, 0x0a, 0x0b, 0x6d, 0x61, 0x78, 0x5f, 0x65, 0x6e, 0x74,
+	0x72, 0x69, 0x65, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x0a, 0x6d, 0x61, 0x78, 0x45,
+	0x6e, 0x74, 0x72, 0x69, 0x65, 0x73, 0x22, 0x75, 0x0a, 0x17, 0x55, 0x73, 0x65, 0x72, 0x43, 0x65,
+	0x6e, 0x74, 0x72, 0x69, 0x63, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x54, 0x6f, 0x6b, 0x65,
+	0x6e, 0x12, 0x15, 0x0a, 0x06, 0x61, 0x70, 0x70, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x0d, 0x52, 0x05, 0x61, 0x70, 0x70, 0x49, 0x64, 0x12, 0x25, 0x0a, 0x0e, 0x65, 0x6e, 0x63, 0x72,
+	0x79, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x6b, 0x65, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x0d, 0x65, 0x6e, 0x63, 0x72, 0x79, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x4b, 0x65, 0x79, 0x12,
+	0x1c, 0x0a, 0x09, 0x62, 0x6c, 0x61, 0x63, 0x6b, 0x6c, 0x69, 0x73, 0x74, 0x18, 0x03, 0x20, 0x03,
+	0x28, 0x04, 0x52, 0x09, 0x62, 0x6c, 0x61, 0x63, 0x6b, 0x6c, 0x69, 0x73, 0x74, 0x22, 0x96, 0x01,
+	0x0a, 0x11, 0x4e, 0x54, 0x46, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
+	0x41, 0x72, 0x67, 0x12, 0x35, 0x0a, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x1f, 0x2e, 0x6e, 0x74, 0x66, 0x2e, 0x70, 0x62, 0x2e, 0x55, 0x73, 0x65, 0x72,
+	0x43, 0x65, 0x6e, 0x74, 0x72, 0x69, 0x63, 0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x54, 0x6f,
+	0x6b, 0x65, 0x6e, 0x52, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x12, 0x14, 0x0a, 0x04, 0x64, 0x73,
+	0x63, 0x70, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0d, 0x48, 0x00, 0x52, 0x04, 0x64, 0x73, 0x63, 0x70,
+	0x12, 0x19, 0x0a, 0x07, 0x72, 0x75, 0x6c, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x0d, 0x48, 0x01, 0x52, 0x06, 0x72, 0x75, 0x6c, 0x65, 0x49, 0x64, 0x42, 0x0a, 0x0a, 0x08, 0x73,
+	0x65, 0x74, 0x5f, 0x64, 0x73, 0x63, 0x70, 0x42, 0x0d, 0x0a, 0x0b, 0x73, 0x65, 0x74, 0x5f, 0x72,
+	0x75, 0x6c, 0x65, 0x5f, 0x69, 0x64, 0x22, 0x96, 0x01, 0x0a, 0x11, 0x4e, 0x54, 0x46, 0x45, 0x6e,
+	0x74, 0x72, 0x79, 0x4d, 0x6f, 0x64, 0x69, 0x66, 0x79, 0x41, 0x72, 0x67, 0x12, 0x35, 0x0a, 0x05,
+	0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1f, 0x2e, 0x6e, 0x74,
+	0x66, 0x2e, 0x70, 0x62, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x43, 0x65, 0x6e, 0x74, 0x72, 0x69, 0x63,
+	0x4e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x05, 0x74, 0x6f,
+	0x6b, 0x65, 0x6e, 0x12, 0x14, 0x0a, 0x04, 0x64, 0x73, 0x63, 0x70, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x0d, 0x48, 0x00, 0x52, 0x04, 0x64, 0x73, 0x63, 0x70, 0x12, 0x19, 0x0a, 0x07, 0x72, 0x75, 0x6c,
+	0x65, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0d, 0x48, 0x01, 0x52, 0x06, 0x72, 0x75,
+	0x6c, 0x65, 0x49, 0x64, 0x42, 0x0a, 0x0a, 0x08, 0x73, 0x65, 0x74, 0x5f, 0x64, 0x73, 0x63, 0x70,
+	0x42, 0x0d, 0x0a, 0x0b, 0x73, 0x65, 0x74, 0x5f, 0x72, 0x75, 0x6c, 0x65, 0x5f, 0x69, 0x64, 0x22,
+	0x2a, 0x0a, 0x11, 0x4e, 0x54, 0x46, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x44, 0x65, 0x6c, 0x65, 0x74,
+	0x65, 0x41, 0x72, 0x67, 0x12, 0x15, 0x0a, 0x06, 0x61, 0x70, 0x70, 0x5f, 0x69, 0x64, 0x18, 0x01,
 	0x20, 0x01, 0x28, 0x0d, 0x52, 0x05, 0x61, 0x70, 0x70, 0x49, 0x64, 0x62, 0x06, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x33,
 }
@@ -518,18 +440,17 @@ func file_ntf_msg_proto_rawDescGZIP() []byte {
 	return file_ntf_msg_proto_rawDescData
 }
 
-var file_ntf_msg_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_ntf_msg_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_ntf_msg_proto_goTypes = []interface{}{
-	(*NtfTableCreateArg)(nil),       // 0: ntf.pb.NtfTableCreateArg
-	(*NtfTableDeleteArg)(nil),       // 1: ntf.pb.NtfTableDeleteArg
-	(*UserCentricNetworkToken)(nil), // 2: ntf.pb.UserCentricNetworkToken
-	(*NtfEntryCreateArg)(nil),       // 3: ntf.pb.NtfEntryCreateArg
-	(*NtfEntryModifyArg)(nil),       // 4: ntf.pb.NtfEntryModifyArg
-	(*NtfEntryDeleteArg)(nil),       // 5: ntf.pb.NtfEntryDeleteArg
+	(*NTFArg)(nil),                  // 0: ntf.pb.NTFArg
+	(*UserCentricNetworkToken)(nil), // 1: ntf.pb.UserCentricNetworkToken
+	(*NTFEntryCreateArg)(nil),       // 2: ntf.pb.NTFEntryCreateArg
+	(*NTFEntryModifyArg)(nil),       // 3: ntf.pb.NTFEntryModifyArg
+	(*NTFEntryDeleteArg)(nil),       // 4: ntf.pb.NTFEntryDeleteArg
 }
 var file_ntf_msg_proto_depIdxs = []int32{
-	2, // 0: ntf.pb.NtfEntryCreateArg.token:type_name -> ntf.pb.UserCentricNetworkToken
-	2, // 1: ntf.pb.NtfEntryModifyArg.token:type_name -> ntf.pb.UserCentricNetworkToken
+	1, // 0: ntf.pb.NTFEntryCreateArg.token:type_name -> ntf.pb.UserCentricNetworkToken
+	1, // 1: ntf.pb.NTFEntryModifyArg.token:type_name -> ntf.pb.UserCentricNetworkToken
 	2, // [2:2] is the sub-list for method output_type
 	2, // [2:2] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
@@ -544,7 +465,7 @@ func file_ntf_msg_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_ntf_msg_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*NtfTableCreateArg); i {
+			switch v := v.(*NTFArg); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -556,18 +477,6 @@ func file_ntf_msg_proto_init() {
 			}
 		}
 		file_ntf_msg_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*NtfTableDeleteArg); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_ntf_msg_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UserCentricNetworkToken); i {
 			case 0:
 				return &v.state
@@ -579,8 +488,20 @@ func file_ntf_msg_proto_init() {
 				return nil
 			}
 		}
+		file_ntf_msg_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*NTFEntryCreateArg); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 		file_ntf_msg_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*NtfEntryCreateArg); i {
+			switch v := v.(*NTFEntryModifyArg); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -592,7 +513,7 @@ func file_ntf_msg_proto_init() {
 			}
 		}
 		file_ntf_msg_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*NtfEntryModifyArg); i {
+			switch v := v.(*NTFEntryDeleteArg); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -603,26 +524,14 @@ func file_ntf_msg_proto_init() {
 				return nil
 			}
 		}
-		file_ntf_msg_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*NtfEntryDeleteArg); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
+	}
+	file_ntf_msg_proto_msgTypes[2].OneofWrappers = []interface{}{
+		(*NTFEntryCreateArg_Dscp)(nil),
+		(*NTFEntryCreateArg_RuleId)(nil),
 	}
 	file_ntf_msg_proto_msgTypes[3].OneofWrappers = []interface{}{
-		(*NtfEntryCreateArg_Dscp)(nil),
-		(*NtfEntryCreateArg_RuleId)(nil),
-	}
-	file_ntf_msg_proto_msgTypes[4].OneofWrappers = []interface{}{
-		(*NtfEntryModifyArg_Dscp)(nil),
-		(*NtfEntryModifyArg_RuleId)(nil),
+		(*NTFEntryModifyArg_Dscp)(nil),
+		(*NTFEntryModifyArg_RuleId)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -630,7 +539,7 @@ func file_ntf_msg_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_ntf_msg_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
