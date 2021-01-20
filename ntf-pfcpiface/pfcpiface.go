@@ -195,10 +195,16 @@ func handlePFDManagementRequest(upf *upf, msg message.Message, addr net.Addr) []
 		if err != nil {
 			log.Println("Failed to read application contents:", err)
 		}
-		config := contents.CustomPFDContent
 
-		log.Println("Found service:", pfdAppId, "config:", config)
-		pfdRules.UpdateAppConfig(pfdAppId, config)
+		if contents == nil {
+			log.Println("Deleting service:", pfdAppId)
+			pfdRules.RemoveAppConfig(pfdAppId)
+		} else {
+			config := contents.CustomPFDContent
+
+			log.Println("Updating service:", pfdAppId, "config:", config)
+			pfdRules.UpdateAppConfig(pfdAppId, config)
+		}
 	}
 
 	var pfdres []byte

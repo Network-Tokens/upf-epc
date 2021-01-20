@@ -12,7 +12,7 @@ import (
 )
 
 type ntfUserCentricToken struct {
-	TokenAppId    uint32
+	TokenType     uint32
 	EncryptionKey string
 	Dscp          uint32
 }
@@ -25,7 +25,7 @@ type pfdRuleEntry struct {
 
 type PfdRules struct {
 	rules map[uint32]*pfdRuleEntry
-	upf     *upf
+	upf   *upf
 }
 
 func NewPfdRules(upf *upf) *PfdRules {
@@ -62,6 +62,14 @@ func (entry *pfdRuleEntry) setConfig(config *ntfUserCentricToken) {
 	}
 }
 
+func (entry *pfdRuleEntry) clearConfig() {
+	log.Println("pfdRuleEntry.clearConfig()")
+
+	if entry.config != nil {
+		entry.deleteBessEntry(entry.upf)
+	}
+}
+
 func (pfdRules *PfdRules) UpdateAppConfig(pfdAppId uint32, config string) {
 	log.Println("PfdRules.UpdateAppConfig()")
 	log.Println("pfdAppId:", pfdAppId, " config:", config)
@@ -78,6 +86,16 @@ func (pfdRules *PfdRules) UpdateAppConfig(pfdAppId uint32, config string) {
 	entry.setConfig(&tokenConfig)
 }
 
+func (pfdRules *PfdRules) RemoveAppConfig(pfdAppId uint32) {
+	log.Println("PfdRules.RemoveAppConfig()")
+	log.Println("pfdAppId:", pfdAppId)
+
+	entry, ok := pfdRules.rules[pfdAppId]
+	if ok {
+		entry.clearConfig()
+	}
+}
+
 func (entry *pfdRuleEntry) createBessEntry(upf *upf) error {
 	log.Println("pfdRuleEntry.createBessEntry(entry.pfdAppId=", entry.pfdAppId, ")")
 	if err := upf.pauseAll(); err != nil {
@@ -85,7 +103,7 @@ func (entry *pfdRuleEntry) createBessEntry(upf *upf) error {
 	}
 
 	token := ntf_pb.UserCentricNetworkToken{
-		AppId:         entry.config.TokenAppId,
+		TokenType:     entry.config.TokenType,
 		EncryptionKey: entry.config.EncryptionKey,
 	}
 
@@ -130,12 +148,83 @@ func (e *ntfError) Error() string {
 	return e.reason
 }
 
-func (config *pfdRuleEntry) updateBessEntry(upf *upf) error {
-	log.Println("TODO: updateBessEntry")
-	return &ntfError{"TODO"}
+func (entry *pfdRuleEntry) updateBessEntry(upf *upf) error {
+	log.Println("pfdRuleEntry.updateBessEntry(entry.pfdAppId=", entry.pfdAppId, ")")
+	if err := upf.pauseAll(); err != nil {
+		return err
+	}
+
+	token := ntf_pb.UserCentricNetworkToken{
+		TokenType:     entry.config.TokenType,
+		EncryptionKey: entry.config.EncryptionKey,
+	}
+
+	arg := ntf_pb.NTFEntryModifyArg{
+		Token:     &token,
+		SetDscp:   &ntf_pb.NTFEntryModifyArg_Dscp{entry.config.Dscp},
+		SetRuleId: &ntf_pb.NTFEntryModifyArg_RuleId{entry.pfdAppId},
+	}
+
+	any, err := ptypes.MarshalAny(&arg)
+	if err != nil {
+		return err
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+
+	cr, err := upf.client.ModuleCommand(ctx, &pb.CommandRequest{
+		Name: "ntf",
+		Cmd:  "entry_modify",
+		Arg:  any,
+	})
+	log.Println("entry_modify:", cr)
+
+	if err != nil {
+		return err
+	}
+	log.Println("ntf.entry_modify():", cr)
+
+	if err = upf.resumeAll(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (config *pfdRuleEntry) deleteBessEntry(upf *upf) error {
-	log.Println("TODO: deleteBessEntry")
-	return &ntfError{"TODO"}
+func (entry *pfdRuleEntry) deleteBessEntry(upf *upf) error {
+	log.Println("pfdRuleEntry.deleteBessEntry(entry.pfdAppId=", entry.pfdAppId, ")")
+	if err := upf.pauseAll(); err != nil {
+		return err
+	}
+
+	arg := ntf_pb.NTFEntryDeleteArg{
+		TokenType:     entry.config.TokenType,
+	}
+
+	any, err := ptypes.MarshalAny(&arg)
+	if err != nil {
+		return err
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+
+	cr, err := upf.client.ModuleCommand(ctx, &pb.CommandRequest{
+		Name: "ntf",
+		Cmd:  "entry_delete",
+		Arg:  any,
+	})
+	log.Println("entry_delete:", cr)
+
+	if err != nil {
+		return err
+	}
+	log.Println("ntf.entry_delete():", cr)
+
+	if err = upf.resumeAll(); err != nil {
+		return err
+	}
+
+	return nil
 }
