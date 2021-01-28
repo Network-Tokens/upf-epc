@@ -6,6 +6,7 @@
 from conf.parser import *
 import conf.ports as port
 import conf.sim as sim
+import commands
 
 port.setup_globals()
 
@@ -172,9 +173,8 @@ if parser.ntf_enabled:
     try:
         _in -> ntf::NTF(dpid=parser.ntf_dpid, max_entries=parser.ntf_max_entries)
         _in = ntf
-    except NameError:
-        # Handling NameError here means that the UPF will still start, even if
-        # NTF support is not compiled in.
+    except:
+        # NTF is not working... start UPF anyway.
         pass
 
 _in -> farLookup::ExactMatch(fields=[{'attr_name':'far_id', 'num_bytes':4}, \
