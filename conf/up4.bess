@@ -149,8 +149,21 @@ for idx, iface in enumerate(interfaces):
 #   - tunnel_ip4_dst
 #   - proto_id
 
-linkMerge::Merge() \
-    -> pktParse::GtpuParser():1 \
+linkMerge::Merge()
+_in = linkMerge
+
+# Insert NTF module, if enabled
+if parser.ntf_enabled:
+    # TODO (@aaron): Right now everything comes out of a single gate.
+    # Because NTF can change the DSCP bits we need to recalculate the
+    # checksum.  This is inefficient to do on each packet.  The NTF module
+    # should be changed to use the 0-gate for ordinary packets, and the
+    # 1-gate for packets on flows that have presented valid tokens (and
+    # potentially a 2-gate for packets that should be discarded).
+    _in -> ntf::NTF(dpid=parser.ntf_dpid, max_entries=parser.ntf_max_entries)
+    _in = ntf
+
+_in -> pktParse::GtpuParser():1 \
     -> pdrLookup::WildcardMatch(fields=[{'attr_name':'src_iface', 'num_bytes':1}, \
                                         {'attr_name':'tunnel_ipv4_dst', 'num_bytes':4}, \
                                         {'attr_name':'teid', 'num_bytes':4}, \
@@ -165,17 +178,13 @@ linkMerge::Merge() \
                                         {'attr_name':'ctr_id', 'num_bytes':4}, \
                                         {'attr_name':'far_id', 'num_bytes':4}]):noGTPUDecap \
     -> preQoSCounter::Counter(name_id='ctr_id', check_exist=True, total=parser.max_sessions)
-
 _in = preQoSCounter
 
-# Insert NTF module, if enabled
 if parser.ntf_enabled:
-    try:
-        _in -> ntf::NTF(dpid=parser.ntf_dpid, max_entries=parser.ntf_max_entries)
-        _in = ntf
-    except:
-        # NTF is not working... start UPF anyway.
-        pass
+    # Recalculate checksum after GTP decap after DSCP change
+    _in -> ntfUDPCsum::L4Checksum() \
+        -> ntfIPCsum::IPChecksum()
+    _in = ntfIPCsum
 
 _in -> farLookup::ExactMatch(fields=[{'attr_name':'far_id', 'num_bytes':4}, \
                                      {'attr_name':'fseid', 'num_bytes':4}], \

@@ -16,8 +16,8 @@ metrics_port=8080
 # "sim" uses Source() modules to simulate traffic generation
 #mode="dpdk"
 #mode="af_xdp"
-#mode="af_packet"
-mode="sim"
+mode="af_packet"
+#mode="sim"
 
 # Gateway interface(s)
 #

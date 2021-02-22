@@ -19,6 +19,7 @@ type pdr struct {
 	srcPort      uint16
 	dstPort      uint16
 	proto        uint8
+	typeOfService uint8
 
 	srcIfaceMask     uint8
 	tunnelIP4DstMask uint32
@@ -28,6 +29,7 @@ type pdr struct {
 	srcPortMask      uint16
 	dstPortMask      uint16
 	protoMask        uint8
+	typeOfServiceMask uint8
 
 	precedence uint32
 	pdrID      uint32
@@ -47,6 +49,7 @@ func (p *pdr) printPDR() {
 	log.Println("srcPort:", p.srcPort)
 	log.Println("dstPort:", p.dstPort)
 	log.Println("proto:", p.proto)
+	log.Println("typeOfService:", p.typeOfService)
 	log.Println("Src Iface Mask:", p.srcIfaceMask)
 	log.Println("tunnelIP4Dst Mask:", int2ip(p.tunnelIP4DstMask))
 	log.Println("tunnelTEIDMask Mask:", p.tunnelTEIDMask)
@@ -55,6 +58,7 @@ func (p *pdr) printPDR() {
 	log.Println("srcPort Mask:", p.srcPortMask)
 	log.Println("dstPort Mask:", p.dstPortMask)
 	log.Println("proto Mask:", p.protoMask)
+	log.Println("typeOfServiceMask:", p.typeOfServiceMask)
 	log.Println("pdrID:", p.pdrID)
 	log.Println("fseID", p.fseID)
 	log.Println("ctrID:", p.ctrID)
